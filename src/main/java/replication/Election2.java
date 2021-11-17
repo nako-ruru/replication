@@ -13,7 +13,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.context.ServletWebServerInitializedEvent;
-import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.Ordered;
@@ -42,7 +41,7 @@ class Election2 implements ApplicationListener<ServletWebServerInitializedEvent>
     private Client client;
 
     @Autowired
-    private InetDiscoverer inetUtils;
+    private InetDiscoverer inetDiscoverer;
 
     private LeaderKey leaderKey;
     private CompletableFuture<CampaignResponse> campaignFuture;
@@ -86,7 +85,7 @@ class Election2 implements ApplicationListener<ServletWebServerInitializedEvent>
 
             int port = event.getWebServer().getPort();
             Map<String, String> proposal = Utils.map(
-                    "hostInfo", String.format("http://%s:%s/", inetUtils.getLocalIp(), port)
+                    "hostInfo", String.format("http://%s:%s/", inetDiscoverer.getLocalIp(), port)
             );
             String json = Utils.toJson(proposal);
             ByteSequence firstProposal = ByteSequence.from(json, StandardCharsets.UTF_8);
