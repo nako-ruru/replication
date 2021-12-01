@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -30,6 +31,18 @@ class Utils {
     }
     public static String abbreviate(final String str, final int maxWidth) {
         return StringUtils.abbreviate(str, maxWidth);
+    }
+    public static boolean isNoneBlank(CharSequence... css) {
+        return StringUtils.isNoneBlank(css);
+    }
+    public static boolean isEmpty(byte[] array) {
+        return ArrayUtils.isEmpty(array);
+    }
+    public static boolean isEmpty(Object[] array) {
+        return ArrayUtils.isEmpty(array);
+    }
+    public static boolean equalsIgnoreCase(CharSequence cs1, CharSequence cs2) {
+        return StringUtils.equalsIgnoreCase(cs1, cs2);
     }
 
     public static byte[] toByteArray(InputStream in) throws IOException {

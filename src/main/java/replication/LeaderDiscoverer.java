@@ -59,14 +59,10 @@ class LeaderDiscoverer implements ApplicationListener<ServletWebServerInitialize
      */
     public Pair<Boolean, URI> isLeaderOrElse() throws InterruptedException, ExecutionException, TimeoutException {
         URI leaderLocalVar = getLeader();
-        try {
-            if(inetDiscoverer.getLocalIp().equals(leaderLocalVar.getHost()) && port == leaderLocalVar.getPort()) {
-                return Pair.of(true, null);
-            } else {
-                return Pair.of(false, leaderLocalVar);
-            }
-        } catch (RuntimeException e) {
-            throw e;
+        if(inetDiscoverer.getLocalIp().equals(leaderLocalVar.getHost()) && port == leaderLocalVar.getPort()) {
+            return Pair.of(true, null);
+        } else {
+            return Pair.of(false, leaderLocalVar);
         }
     }
 

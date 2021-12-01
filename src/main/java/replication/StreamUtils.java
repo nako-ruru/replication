@@ -1,6 +1,5 @@
 package replication;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +72,9 @@ class StreamUtils {
     }
 
     public String getKey() {
-        if(StringUtils.isBlank(key)) {
+        if(Utils.isBlank(key)) {
             synchronized (lock) {
-                if(StringUtils.isBlank(key)) {
+                if(Utils.isBlank(key)) {
                     key = String.format("%s-events", serviceName);
                 }
             }
@@ -84,9 +83,9 @@ class StreamUtils {
     }
 
     public String getGroup() {
-        if(StringUtils.isBlank(group)) {
+        if(Utils.isBlank(group)) {
             synchronized (lock) {
-                if(StringUtils.isBlank(group)) {
+                if(Utils.isBlank(group)) {
                     group = getKey() + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss-SSS").format(new Date());
                 }
             }
@@ -96,7 +95,7 @@ class StreamUtils {
 
     @PreDestroy
     private void destroy() {
-        if(StringUtils.isNoneBlank(getKey(), getGroup())) {
+        if(Utils.isNoneBlank(getKey(), getGroup())) {
             stringRedisTemplate.opsForStream().destroyGroup(getKey(), getGroup());
         }
     }

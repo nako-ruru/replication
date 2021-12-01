@@ -19,7 +19,7 @@ a java replication solution for master-slave architecture(using leader election)
 > Each time a user login, `UserCount.increment()` will be called;
 > in other hand, each time a user logout, `UserCount.decrement()` will be called.
 > 
-> The service has a 'kick all' feature, in such case, `UserCount.reset()` will be called.
+> The service has a 'kick all' feature as well, in such case, `UserCount.reset()` will be called.
 
 ```java
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ class UserController {
 }
 
 ```
-> Now I want to deploy such service with multiple nodes for disaster tolerance.
+> Now I want to deploy such service with multiple nodes due to disaster tolerance.
 > 
 > As user count are recorded in memory, I have to copy data to other nodes.
 > 
@@ -220,7 +220,7 @@ application:
     fetch-print-size: 10    # used for event sourcing, a log information that indicates how many events have been loading already
 ```
 
-# Recovery
+# Diagnosis
 1. What shall we do if the leader node fails send replication events to middlewares?
    > Check yaml configuration and redis configuration
 2. What shall we do if the non-leader nodes don't receive replication events from middlewares?

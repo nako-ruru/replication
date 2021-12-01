@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -217,13 +215,13 @@ class Watch2 implements ApplicationListener<ServletWebServerInitializedEvent> {
         public void onMessage(MapRecord<String, String, String> record) {
             try {
                 String creator = record.getValue().get("creator");
-                if(StringUtils.equalsIgnoreCase(creator, streamUtils.getGroup())) {
+                if(Utils.equalsIgnoreCase(creator, streamUtils.getGroup())) {
                     ack(record);
                     return;
                 }
                 replayHistoryJobsCountDownLatch.await();
                 //以下if代码片段理论上不会发生，这里只是做了一写安全处理
-                if (StringUtils.isBlank(creator)) {
+                if (Utils.isBlank(creator)) {
                     if (leaderDiscoverer.isLeaderOrElse().getLeft()) {
                         ack(record);
                         return;
@@ -299,9 +297,9 @@ class Watch2 implements ApplicationListener<ServletWebServerInitializedEvent> {
         if(beanAndMethod != null) {
             final byte[] compressedParameters = jsonNode.getCompressedParameters();
             Object[] parametersNode;
-            if(ArrayUtils.isEmpty(compressedParameters)) {
+            if(Utils.isEmpty(compressedParameters)) {
                 parametersNode = jsonNode.getParameters();
-            } else if (ArrayUtils.isEmpty(jsonNode.getParameters())) {
+            } else if (Utils.isEmpty(jsonNode.getParameters())) {
                 final byte[] decompress = Utils.decompress(compressedParameters, 0, compressedParameters.length);
                 parametersNode = mapper.readValue(decompress, Object[].class);
             } else {
@@ -313,15 +311,11 @@ class Watch2 implements ApplicationListener<ServletWebServerInitializedEvent> {
             final Type[] methodGenericParameterTypes = beanAndMethod.getRight().getGenericParameterTypes();
             Object[] args = IntStream.range(0, methodGenericParameterTypes.length)
                     .mapToObj(i -> {
-                        try {
-                            return convert(
-                                    parametersNode[i],
-                                    actualParameterTypes != null ? actualParameterTypes[i] : null,
-                                    methodGenericParameterTypes[i]
-                            );
-                        } catch (RuntimeException e) {
-                            throw e;
-                        }
+                        return convert(
+                                parametersNode[i],
+                                actualParameterTypes != null ? actualParameterTypes[i] : null,
+                                methodGenericParameterTypes[i]
+                        );
                     })
                     .toArray(Object[]::new);
             return new Action2(BigInteger.ZERO, args, beanAndMethod);
